@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Claims — Large Print</title>
-<link rel="stylesheet" href="big.css?v=20260731d">
+<link rel="stylesheet" href="big.css?v=20260731e">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128203;</text></svg>">
 </head>
 <body>
@@ -13,10 +13,8 @@
 <!-- ── App ───────────────────────────────────────────────────────────────── -->
 <div id="app" class="app" hidden>
 
-  <header class="topbar">
-    <h1>Claims</h1>
-  </header>
-
+  <!-- No page title: the tabs already say what this is, and the space is
+       better spent on the record itself. -->
   <nav class="tabs" id="tabs">
     <button class="tab is-active" data-board="subrogation">Subrogations</button>
     <button class="tab" data-board="collection">Collections</button>
@@ -38,8 +36,9 @@
     </button>
   </nav>
 
+  <!-- No "add record" either: this view reads and edits existing claims.
+       Adding and deleting both happen on the standard table view. -->
   <div class="extras">
-    <button class="btn wide" id="addRow">+ Add a new record</button>
     <a class="btn wide link" href="index.html">Switch to the standard view</a>
   </div>
 </div>
@@ -50,7 +49,7 @@
 <div id="toast" class="toast" hidden></div>
 <div id="setupErr" class="setup-err" hidden></div>
 
-<script src="config.js?v=20260731d"></script>
-<script type="module" src="big.js?v=20260731d"></script>
+<script src="config.js?v=20260731e"></script>
+<script type="module" src="big.js?v=20260731e"></script>
 </body>
 </html>

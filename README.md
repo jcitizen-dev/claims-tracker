@@ -12,7 +12,7 @@ No build step — plain static files talking straight to Supabase.
 |---|---|---|
 | Page | `index.html` | `big.html` |
 | Layout | Dense table, all rows at once | One record per screen |
-| Delete | Yes | No — read and edit only |
+| Add / delete | Yes | No — read and edit only |
 | Built for | Everyday work | Low vision |
 
 They share one database and one set of live updates. An edit in
@@ -21,13 +21,19 @@ from its header.
 
 **Large print** shows the few fields that matter — Customer Name, Amount,
 Car # — in very large type, and keeps the rest behind a **Show the other
-details** button. Oversized **Back** / **Next** buttons (and the left/right
-arrow keys) move between records one at a time, and the two tabs are full-width
-buttons. Nothing on the page is smaller than 18px.
+details** button. That button only appears on records that actually have other
+details; a name-and-car-only record shows no dropdown at all. Oversized
+**Back** / **Next** buttons (and the left/right arrow keys) move between
+records one at a time, and the two tabs are full-width buttons. There is no
+page heading, so the record gets the vertical space. Nothing is under 18px.
 
-**The large-print view has no delete**, on purpose. It reads and edits; there is
-nothing destructive to reach. Records are deleted from the standard table view
-instead.
+**The large-print view cannot add or delete records**, on purpose — it reads
+and edits existing claims only. Both of those happen on the standard table
+view, so there is nothing on Dave's page that can lose or create a record.
+
+One consequence: a record with no other details has no way to gain them from
+this view, since the fields are only reachable through that button. Fill those
+in from the standard view.
 
 ## How it fits together
 

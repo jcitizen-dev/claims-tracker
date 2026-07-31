@@ -1,13 +1,16 @@
 /* Large-print view: one record at a time, big type, secondary fields behind a
  * "more details" button, oversized Back/Next. Same database and same live
- * updates as the standard view. */
+ * updates as the standard view.
+ *
+ * Read and edit only -- no adding, no deleting. Both of those happen on the
+ * standard table view, so there is nothing here that can lose a record. */
 import {
   COL, BOARDS,
   configured, $, showSetupError,
   display, editable, parseMoney, sortRows,
-  loadClaims, updateCell, insertRow, subscribeClaims, isDeleted,
+  loadClaims, updateCell, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731d";
+} from "./shared.js?v=20260731e";
 
 if (!configured) {
   showSetupError();
@@ -61,30 +64,39 @@ function render() {
 
   for (const key of primary) card.append(field(row, key));
 
-  const toggle = document.createElement("button");
-  toggle.type = "button";
-  toggle.className = "btn disclose";
-  toggle.id = "disclose";
-  toggle.setAttribute("aria-expanded", String(showDetails));
-  toggle.textContent = showDetails
-    ? "Hide the other details  ▲"
-    : "Show the other details  ▼";
-  toggle.addEventListener("click", () => {
-    showDetails = !showDetails;
-    render();
-    $("disclose")?.focus();
-  });
-  card.append(toggle);
+  // Don't offer "the other details" on a record that hasn't any -- most of the
+  // Collections rows and the unworked Subrogations ones are name-and-car only.
+  // The `|| showDetails` keeps the section from vanishing under someone who
+  // just blanked the last filled field while it was open; once they close it,
+  // the button goes away on the next render.
+  const hasDetails = secondary.some((k) => String(row[k] ?? "").trim() !== "");
 
-  const details = document.createElement("div");
-  details.className = "details";
-  details.hidden = !showDetails;
-  for (const key of secondary) details.append(field(row, key));
+  if (hasDetails || showDetails) {
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "btn disclose";
+    toggle.id = "disclose";
+    toggle.setAttribute("aria-expanded", String(showDetails));
+    toggle.textContent = showDetails
+      ? "Hide the other details  ▲"
+      : "Show the other details  ▼";
+    toggle.addEventListener("click", () => {
+      showDetails = !showDetails;
+      render();
+      $("disclose")?.focus();
+    });
+    card.append(toggle);
 
-  // This view deliberately has no delete. Reading and editing only -- deleting
-  // is done from the standard table view (index.html).
+    const details = document.createElement("div");
+    details.className = "details";
+    details.hidden = !showDetails;
+    for (const key of secondary) details.append(field(row, key));
+    card.append(details);
+  }
 
-  card.append(details);
+  // This view deliberately has no delete, and no add. Reading and editing only
+  // -- both of those happen on the standard table view (index.html).
+
   paintSaved();
 }
 
@@ -253,22 +265,6 @@ $("tabs").addEventListener("click", (e) => {
   showDetails = false;
   for (const t of $("tabs").children) t.classList.toggle("is-active", t === tab);
   render();
-});
-
-/* ── Add ────────────────────────────────────────────────────────────────── */
-$("addRow").addEventListener("click", async () => {
-  const btn = $("addRow");
-  btn.disabled = true;
-  const { data, error } = await insertRow(board);
-  btn.disabled = false;
-  if (error) return toast("Could not add a record: " + error.message, true);
-
-  upsertLocal(data);
-  showDetails = false;
-  render();
-  const at = boardRows().findIndex((r) => r.id === data.id);
-  if (at !== -1) { index = at; render(); }
-  $("card").querySelector("input")?.focus();
 });
 
 /* ── Data + realtime ────────────────────────────────────────────────────── */
