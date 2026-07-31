@@ -163,3 +163,22 @@ from claims
 where board = 'subrogation'
 order by amount desc nulls last;
 ```
+
+## Deploying a change
+
+GitHub Pages serves files with `Cache-Control: max-age=600`, so browsers will
+happily run ten-minute-old JavaScript against a freshly-changed database. That
+is a real hazard — old code plus a new schema is how a "soft" delete can turn
+out to be a hard one.
+
+So **every time you change a `.js` or `.css` file, bump the version stamp** and
+push both together:
+
+```bash
+./bump-version.sh   # rewrites the ?v= stamps everywhere
+git commit -am "..." && git push
+```
+
+The stamp appears in `index.html`, `big.html` (on the `config.js`, `app.js`,
+`big.js` and stylesheet tags) and in the `./shared.js?v=` import inside `app.js`
+and `big.js`. All of them have to match.
