@@ -17,6 +17,11 @@
 
 * { box-sizing: border-box; }
 
+/* The `hidden` attribute only sets `display: none` from the UA stylesheet, so
+ * any author rule setting `display` (.modal, .app) silently beats it and the
+ * element stays on screen. Settle it once, here. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   height: 100%;
