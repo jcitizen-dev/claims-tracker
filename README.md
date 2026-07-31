@@ -27,6 +27,25 @@ details; a name-and-car-only record shows no dropdown at all. Oversized
 records one at a time, and the two tabs are full-width buttons. There is no
 page heading, so the record gets the vertical space. Nothing is under 18px.
 
+### Fitting on a phone
+
+It is laid out so **Back / Next are reachable without scrolling on an iPhone
+Pro Max** (~440pt wide) with a worked record on screen — the nav's bottom edge
+lands around 712px, inside Safari's visible area.
+
+That budget is tight, so if you add anything to this view, re-measure. The
+rules that buy the space:
+
+- The record counter sits *between* Back and Next rather than on its own line.
+- Both tabs and both nav buttons stay side by side at phone width. Stacking
+  either costs 70–100px and pushes the nav off screen — that is why the
+  `max-width: 520px` block places them explicitly instead of falling back to
+  one column.
+- Padding, not type, was reduced. **Every font size is identical at every
+  width** (34px fields, 42px amount, 26px tabs, 28px nav, 19px labels). Do not
+  shrink type here to make something fit; take it out of the padding, or leave
+  it out.
+
 **The large-print view cannot add or delete records**, on purpose — it reads
 and edits existing claims only. Both of those happen on the standard table
 view, so there is nothing on Dave's page that can lose or create a record.

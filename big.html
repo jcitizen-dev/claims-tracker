@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Claims — Large Print</title>
-<link rel="stylesheet" href="big.css?v=20260731e">
+<link rel="stylesheet" href="big.css?v=20260731f">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128203;</text></svg>">
 </head>
 <body>
@@ -20,17 +20,18 @@
     <button class="tab" data-board="collection">Collections</button>
   </nav>
 
-  <p class="position" id="position"></p>
-
   <main class="card" id="card"></main>
 
   <p class="empty" id="empty" hidden>No records on this tab yet.</p>
 
-  <!-- Big navigation. Kept well away from anything destructive. -->
+  <!-- Big navigation. The record counter sits between the buttons rather than
+       on a line of its own: it belongs with the controls it describes, and it
+       buys back a whole row of vertical space. -->
   <nav class="pager">
     <button class="btn nav" id="prevBtn">
       <span class="nav-arrow">←</span><span>Back</span>
     </button>
+    <p class="position" id="position"></p>
     <button class="btn nav" id="nextBtn">
       <span>Next</span><span class="nav-arrow">→</span>
     </button>
@@ -49,7 +50,7 @@
 <div id="toast" class="toast" hidden></div>
 <div id="setupErr" class="setup-err" hidden></div>
 
-<script src="config.js?v=20260731e"></script>
-<script type="module" src="big.js?v=20260731e"></script>
+<script src="config.js?v=20260731f"></script>
+<script type="module" src="big.js?v=20260731f"></script>
 </body>
 </html>

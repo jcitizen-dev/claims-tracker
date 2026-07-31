@@ -10,7 +10,7 @@ import {
   display, editable, parseMoney, sortRows,
   loadClaims, updateCell, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731e";
+} from "./shared.js?v=20260731f";
 
 if (!configured) {
   showSetupError();
