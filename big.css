@@ -186,9 +186,6 @@ body {
 }
 .details[hidden] { display: none; }
 
-.danger-zone { margin-top: 30px; padding-top: 22px; border-top: 3px dashed #b9c0cb; }
-.danger-zone .btn { width: 100%; color: var(--brand); border-color: var(--brand); }
-.danger-zone .btn:hover { background: var(--brand); color: #fff; }
 
 .saved {
   display: inline-block;
@@ -206,29 +203,6 @@ body {
 .extras { margin-top: 26px; display: grid; gap: 14px; }
 
 .empty { font-size: 26px; font-weight: 700; text-align: center; padding: 40px 10px; }
-
-/* ── Modal ───────────────────────────────────────────────────────────────── */
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgb(13 16 21 / .6);
-  display: grid;
-  place-items: center;
-  padding: 20px;
-}
-.modal-card {
-  background: #fff;
-  border: 4px solid var(--line);
-  border-radius: 14px;
-  padding: 30px;
-  width: 100%;
-  max-width: 560px;
-}
-.modal-card h2 { margin: 0 0 14px; font-size: 32px; }
-.modal-card p  { margin: 0 0 28px; font-size: 23px; line-height: 1.45; }
-.modal-actions { display: grid; gap: 14px; }
-.modal-actions .btn { width: 100%; }
 
 /* ── Toast ───────────────────────────────────────────────────────────────── */
 .toast {
@@ -266,7 +240,7 @@ body {
 }
 
 @media print {
-  .topbar, .tabs, .pager, .extras, .disclose, .danger-zone, .toast, .modal { display: none !important; }
+  .topbar, .tabs, .pager, .extras, .disclose, .toast { display: none !important; }
   .details[hidden] { display: block !important; }
   .card { border-width: 2px; }
 }

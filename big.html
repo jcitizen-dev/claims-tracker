@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Claims — Large Print</title>
-<link rel="stylesheet" href="big.css?v=20260731c">
+<link rel="stylesheet" href="big.css?v=20260731d">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128203;</text></svg>">
 </head>
 <body>
@@ -44,22 +44,13 @@
   </div>
 </div>
 
-<!-- ── Delete confirmation ───────────────────────────────────────────────── -->
-<div id="modal" class="modal" hidden>
-  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <h2 id="modalTitle">Delete this record?</h2>
-    <p id="modalBody"></p>
-    <div class="modal-actions">
-      <button class="btn big-ghost" id="modalCancel">No, keep it</button>
-      <button class="btn danger" id="modalConfirm">Yes, delete</button>
-    </div>
-  </div>
-</div>
+<!-- This view has no delete, by design. Records are removed from the standard
+     table view instead, so there is nothing destructive to reach here. -->
 
 <div id="toast" class="toast" hidden></div>
 <div id="setupErr" class="setup-err" hidden></div>
 
-<script src="config.js?v=20260731c"></script>
-<script type="module" src="big.js?v=20260731c"></script>
+<script src="config.js?v=20260731d"></script>
+<script type="module" src="big.js?v=20260731d"></script>
 </body>
 </html>

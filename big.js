@@ -5,9 +5,9 @@ import {
   COL, BOARDS,
   configured, $, showSetupError,
   display, editable, parseMoney, sortRows,
-  loadClaims, updateCell, insertRow, deleteRow, subscribeClaims, isDeleted,
+  loadClaims, updateCell, insertRow, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731c";
+} from "./shared.js?v=20260731d";
 
 if (!configured) {
   showSetupError();
@@ -81,17 +81,8 @@ function render() {
   details.hidden = !showDetails;
   for (const key of secondary) details.append(field(row, key));
 
-  // Delete lives down inside the details, deliberately far from the big
-  // Back/Next buttons so it can't be hit by mistake.
-  const zone = document.createElement("div");
-  zone.className = "danger-zone";
-  const del = document.createElement("button");
-  del.type = "button";
-  del.className = "btn";
-  del.textContent = "Delete this record";
-  del.addEventListener("click", () => askDelete(row));
-  zone.append(del);
-  details.append(zone);
+  // This view deliberately has no delete. Reading and editing only -- deleting
+  // is done from the standard table view (index.html).
 
   card.append(details);
   paintSaved();
@@ -248,10 +239,6 @@ $("prevBtn").addEventListener("click", () => go(-1));
 $("nextBtn").addEventListener("click", () => go(1));
 
 document.addEventListener("keydown", (e) => {
-  if (!$("modal").hidden) {
-    if (e.key === "Escape") closeModal();
-    return;
-  }
   // Don't hijack the arrow keys while someone is typing in a field.
   if (e.target.tagName === "INPUT") return;
   if (e.key === "ArrowLeft") go(-1);
@@ -268,7 +255,7 @@ $("tabs").addEventListener("click", (e) => {
   render();
 });
 
-/* ── Add / delete ───────────────────────────────────────────────────────── */
+/* ── Add ────────────────────────────────────────────────────────────────── */
 $("addRow").addEventListener("click", async () => {
   const btn = $("addRow");
   btn.disabled = true;
@@ -282,38 +269,6 @@ $("addRow").addEventListener("click", async () => {
   const at = boardRows().findIndex((r) => r.id === data.id);
   if (at !== -1) { index = at; render(); }
   $("card").querySelector("input")?.focus();
-});
-
-let pendingDelete = null;
-
-function askDelete(row) {
-  pendingDelete = row;
-  const who = (row.customer_name || "").trim();
-  const car = (row.car_num || "").trim();
-  const label = who || car ? [car, who].filter(Boolean).join(" — ") : "this blank record";
-  $("modalBody").textContent =
-    `${label} will disappear for everyone. Nothing is destroyed — it can be ` +
-    `brought back if this was a mistake.`;
-  $("modal").hidden = false;
-  $("modalCancel").focus();
-}
-
-function closeModal() {
-  $("modal").hidden = true;
-  pendingDelete = null;
-}
-
-$("modalCancel").addEventListener("click", closeModal);
-$("modalConfirm").addEventListener("click", async () => {
-  const row = pendingDelete;
-  if (!row) return;
-  closeModal();
-  const { error } = await deleteRow(row.id);
-  if (error) return toast("Could not delete: " + error.message, true);
-  rows = rows.filter((r) => r.id !== row.id);
-  showDetails = false;
-  render();
-  toast("Record deleted.");
 });
 
 /* ── Data + realtime ────────────────────────────────────────────────────── */

@@ -12,6 +12,7 @@ No build step — plain static files talking straight to Supabase.
 |---|---|---|
 | Page | `index.html` | `big.html` |
 | Layout | Dense table, all rows at once | One record per screen |
+| Delete | Yes | No — read and edit only |
 | Built for | Everyday work | Low vision |
 
 They share one database and one set of live updates. An edit in
@@ -22,9 +23,11 @@ from its header.
 Car # — in very large type, and keeps the rest behind a **Show the other
 details** button. Oversized **Back** / **Next** buttons (and the left/right
 arrow keys) move between records one at a time, and the two tabs are full-width
-buttons. Nothing on the page is smaller than 18px. **Delete** is deliberately
-tucked inside the details section, well away from the navigation buttons, so it
-can't be hit by accident.
+buttons. Nothing on the page is smaller than 18px.
+
+**The large-print view has no delete**, on purpose. It reads and edits; there is
+nothing destructive to reach. Records are deleted from the standard table view
+instead.
 
 ## How it fits together
 
