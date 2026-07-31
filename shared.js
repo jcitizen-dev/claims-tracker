@@ -122,12 +122,24 @@ export function sortRows(list, sort) {
 }
 
 /* ── Data access ────────────────────────────────────────────────────────── */
-export const loadClaims = () => sb.from("claims").select("*");
+// Deletes are soft: the row keeps existing with `deleted_at` set, so nothing is
+// ever actually lost and anything can be brought back from the dashboard. See
+// the README for the one-line restore.
+export const loadClaims = () =>
+  sb.from("claims").select("*").is("deleted_at", null);
+
 export const updateCell = (id, key, value) =>
   sb.from("claims").update({ [key]: value }).eq("id", id);
+
 export const insertRow = (board) =>
   sb.from("claims").insert({ board }).select().single();
-export const deleteRow = (id) => sb.from("claims").delete().eq("id", id);
+
+export const deleteRow = (id) =>
+  sb.from("claims").update({ deleted_at: new Date().toISOString() }).eq("id", id);
+
+// A soft delete reaches other browsers as an UPDATE, not a DELETE, so both
+// views need to recognise it as "this row is gone".
+export const isDeleted = (row) => row?.deleted_at != null;
 
 export function subscribeClaims(handler) {
   return sb

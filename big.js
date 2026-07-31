@@ -5,7 +5,7 @@ import {
   COL, BOARDS,
   configured, $, showSetupError,
   display, editable, parseMoney, sortRows,
-  loadClaims, updateCell, insertRow, deleteRow, subscribeClaims,
+  loadClaims, updateCell, insertRow, deleteRow, subscribeClaims, isDeleted,
   start, toast,
 } from "./shared.js";
 
@@ -292,7 +292,8 @@ function askDelete(row) {
   const car = (row.car_num || "").trim();
   const label = who || car ? [car, who].filter(Boolean).join(" — ") : "this blank record";
   $("modalBody").textContent =
-    `${label} will be permanently removed for everyone. This cannot be undone.`;
+    `${label} will disappear for everyone. Nothing is destroyed — it can be ` +
+    `brought back if this was a mistake.`;
   $("modal").hidden = false;
   $("modalCancel").focus();
 }
@@ -332,6 +333,9 @@ start(async () => {
     const showing = currentRow()?.id;
     if (payload.eventType === "DELETE") {
       rows = rows.filter((r) => r.id !== payload.old.id);
+    } else if (isDeleted(payload.new)) {
+      // Somebody else deleted it; a soft delete arrives as an UPDATE.
+      rows = rows.filter((r) => r.id !== payload.new.id);
     } else {
       if (editingKey && payload.new.id === showing) {
         const keep = rows.find((r) => r.id === payload.new.id);

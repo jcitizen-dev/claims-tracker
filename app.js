@@ -3,7 +3,7 @@ import {
   COLUMNS, COL, ALL_KEYS, BOARDS,
   configured, $, showSetupError,
   display, editable, parseMoney, sortRows,
-  loadClaims, updateCell, insertRow, deleteRow, subscribeClaims,
+  loadClaims, updateCell, insertRow, deleteRow, subscribeClaims, isDeleted,
   start, toast,
 } from "./shared.js";
 
@@ -275,7 +275,9 @@ function askDelete(row) {
   const who = (row.customer_name || "").trim();
   const car = (row.car_num || "").trim();
   const label = who || car ? [car, who].filter(Boolean).join(" — ") : "this blank row";
-  $("modalBody").textContent = `${label} will be permanently removed for everyone.`;
+  $("modalBody").textContent =
+    `${label} will disappear for everyone. Nothing is destroyed — it can be ` +
+    `restored from the database if this was a mistake.`;
   $("modal").hidden = false;
   $("modalCancel").focus();
 }
@@ -383,6 +385,9 @@ start(async () => {
   subscribeClaims((payload) => {
     if (payload.eventType === "DELETE") {
       rows = rows.filter((r) => r.id !== payload.old.id);
+    } else if (isDeleted(payload.new)) {
+      // Somebody else deleted it; a soft delete arrives as an UPDATE.
+      rows = rows.filter((r) => r.id !== payload.new.id);
     } else {
       // Don't yank a cell out from under someone mid-edit.
       if (editing && editing.id === payload.new.id) {

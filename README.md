@@ -86,6 +86,37 @@ The plumbing is still here, so this is a small job:
 
 The login styles are still in `styles.css` and `big.css` for this reason.
 
+## Deleting is reversible
+
+Delete does not actually remove anything. It sets `deleted_at` on the row; both
+views load only rows where `deleted_at is null`, so it vanishes from the app
+while staying in the database.
+
+**To see what has been deleted**, in the SQL Editor:
+
+```sql
+select car_num, customer_name, amount, board, deleted_at
+from claims
+where deleted_at is not null
+order by deleted_at desc;
+```
+
+**To bring one back**, clear the flag — it reappears in the app immediately, in
+every open browser:
+
+```sql
+update claims set deleted_at = null where car_num = '471';
+```
+
+**To really destroy something** (there is no undo for this):
+
+```sql
+delete from claims where deleted_at is not null;
+```
+
+This matters because the app has no login and the free Supabase tier keeps no
+automatic backups — a soft delete is the only safety net under a mis-click.
+
 ## Data notes
 
 - **Amount** is a real `numeric` column. Type `1234.56`, `$1,234.56`, or
