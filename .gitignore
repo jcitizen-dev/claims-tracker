@@ -1,0 +1,5 @@
+.DS_Store
+node_modules/
+
+# Real customer data — never commit (this repo is public)
+seed-data.sql

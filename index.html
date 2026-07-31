@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Claims Tracker</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128203;</text></svg>">
+</head>
+<body>
+
+<!-- ── Sign in ───────────────────────────────────────────────────────────── -->
+<div id="login" class="login" hidden>
+  <form class="login-card" id="loginForm">
+    <h1>Claims Tracker</h1>
+    <p class="login-sub">Sign in to continue.</p>
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="username" required>
+    <label for="password">Password</label>
+    <input id="password" type="password" autocomplete="current-password" required>
+    <button type="submit" class="btn primary" id="loginBtn">Sign in</button>
+    <p class="login-err" id="loginErr" hidden></p>
+  </form>
+</div>
+
+<!-- ── App ───────────────────────────────────────────────────────────────── -->
+<div id="app" class="app" hidden>
+
+  <header class="topbar">
+    <h1>Claims Tracker</h1>
+    <div class="who">
+      <span id="userEmail"></span>
+      <button class="btn ghost" id="signOut">Sign out</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab is-active" data-board="subrogation">Subrogations</button>
+    <button class="tab" data-board="collection">Collections</button>
+  </nav>
+
+  <div class="toolbar">
+    <input id="search" class="search" type="search" placeholder="Search this tab…" autocomplete="off">
+    <span class="count" id="count"></span>
+    <span class="spacer"></span>
+    <div class="menu">
+      <button class="btn ghost" id="colBtn" aria-haspopup="true" aria-expanded="false">Columns ▾</button>
+      <div class="menu-pop" id="colPop" hidden></div>
+    </div>
+    <button class="btn ghost" id="printBtn">Print</button>
+    <button class="btn primary" id="addRow">+ Add Row</button>
+  </div>
+
+  <h2 class="print-title" id="printTitle"></h2>
+
+  <div class="tablewrap">
+    <table class="grid" id="grid">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <p class="empty" id="empty" hidden></p>
+  </div>
+
+  <footer class="hint">
+    Click any cell to edit. <kbd>Enter</kbd> saves, <kbd>Esc</kbd> cancels,
+    <kbd>Tab</kbd> moves to the next cell. Changes save automatically and appear
+    for everyone else within a second or two.
+  </footer>
+</div>
+
+<!-- ── Delete confirmation ───────────────────────────────────────────────── -->
+<div id="modal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Delete this row?</h2>
+    <p id="modalBody"></p>
+    <div class="modal-actions">
+      <button class="btn ghost" id="modalCancel">Cancel</button>
+      <button class="btn danger" id="modalConfirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<div id="setupErr" class="setup-err" hidden></div>
+
+<script src="config.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
