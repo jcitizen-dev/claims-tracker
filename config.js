@@ -7,6 +7,6 @@
 //
 // Find these in your Supabase project under Settings -> API.
 window.CLAIMS_CONFIG = {
-  SUPABASE_URL: "PASTE_PROJECT_URL_HERE",
-  SUPABASE_ANON_KEY: "PASTE_ANON_PUBLIC_KEY_HERE",
+  SUPABASE_URL: "https://etrppjxmelqqotxlldsp.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_b5c6m1bVhdN9mYLbIdvudQ_Nj3R3kKJ",
 };

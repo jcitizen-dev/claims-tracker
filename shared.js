@@ -39,8 +39,10 @@ export const BOARDS = {
 
 /* ── Connection ─────────────────────────────────────────────────────────── */
 const cfg = window.CLAIMS_CONFIG || {};
-export const configured =
-  !!cfg.SUPABASE_URL && !String(cfg.SUPABASE_URL).startsWith("PASTE");
+const filled = (v) => !!v && !String(v).startsWith("PASTE");
+// Both values matter: a real URL with a placeholder key would sail past this
+// check and then fail at request time with a far less obvious error.
+export const configured = filled(cfg.SUPABASE_URL) && filled(cfg.SUPABASE_ANON_KEY);
 
 export const sb = configured
   ? createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY)
