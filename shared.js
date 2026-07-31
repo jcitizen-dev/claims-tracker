@@ -1,0 +1,207 @@
+/* Shared by both front ends: the standard table view (index.html) and the
+ * large-print view (big.html). Columns, money handling and sorting live here
+ * so the two can never drift apart.
+ */
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+/* ── Columns ────────────────────────────────────────────────────────────── */
+export const COLUMNS = [
+  { key: "car_num",       label: "Car #",         type: "text" },
+  { key: "amount",        label: "Amount",        type: "money" },
+  { key: "date_of_loss",  label: "Date of Loss",  type: "date" },
+  { key: "claim_num",     label: "Claim #",       type: "text" },
+  { key: "date_received", label: "Date Received", type: "date" },
+  { key: "customer_name", label: "Customer Name", type: "text" },
+  { key: "stage",         label: "Stage",         type: "text" },
+  { key: "status",        label: "Status",        type: "text" },
+  { key: "vin",           label: "VIN",           type: "text", mono: true },
+  { key: "contract",      label: "Contract",      type: "text" },
+];
+
+export const COL = Object.fromEntries(COLUMNS.map((c) => [c.key, c]));
+export const ALL_KEYS = COLUMNS.map((c) => c.key);
+
+export const BOARDS = {
+  subrogation: {
+    label: "Subrogations",
+    defaultCols: ALL_KEYS,
+    defaultSort: { key: "amount", dir: "desc" },
+    // What the large-print view shows up front, before "more details".
+    primary: ["customer_name", "amount", "car_num"],
+  },
+  collection: {
+    label: "Collections",
+    defaultCols: ["car_num", "customer_name"],
+    defaultSort: { key: "created_at", dir: "asc" },
+    primary: ["customer_name", "car_num"],
+  },
+};
+
+/* ── Connection ─────────────────────────────────────────────────────────── */
+const cfg = window.CLAIMS_CONFIG || {};
+export const configured =
+  !!cfg.SUPABASE_URL && !String(cfg.SUPABASE_URL).startsWith("PASTE");
+
+export const sb = configured
+  ? createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY)
+  : null;
+
+export const $ = (id) => document.getElementById(id);
+
+export function showSetupError() {
+  const el = $("setupErr");
+  if (!el) return;
+  el.hidden = false;
+  el.innerHTML =
+    "<strong>Not configured yet.</strong><br>Fill in <code>SUPABASE_URL</code> " +
+    "and <code>SUPABASE_ANON_KEY</code> in <code>config.js</code>, then reload.";
+}
+
+/* ── Formatting & parsing ───────────────────────────────────────────────── */
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+
+export const fmtMoney = (v) =>
+  v === null || v === undefined || v === "" ? "" : usd.format(Number(v));
+
+// Number, null for blank, or undefined when it isn't a number at all.
+export function parseMoney(text) {
+  const t = String(text).replace(/[$,\s]/g, "").trim();
+  if (!t) return null;
+  const n = Number(t);
+  return Number.isFinite(n) ? Math.round(n * 100) / 100 : undefined;
+}
+
+// M/D/YYYY -> timestamp, for sorting only. Never rewrites what was typed.
+export function dateValue(s) {
+  const m = /^\s*(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})\s*$/.exec(s || "");
+  if (!m) return null;
+  let y = +m[3];
+  if (y < 100) y += y < 70 ? 2000 : 1900;
+  return new Date(y, +m[1] - 1, +m[2]).getTime();
+}
+
+export const display = (row, key) =>
+  COL[key].type === "money" ? fmtMoney(row[key]) : row[key] ?? "";
+
+// What belongs in the box while it's being edited: no "$" or commas in the way.
+export const editable = (row, key) =>
+  COL[key].type === "money"
+    ? row[key] === null || row[key] === undefined
+      ? ""
+      : String(row[key])
+    : row[key] ?? "";
+
+/* ── Sorting ────────────────────────────────────────────────────────────── */
+function sortKeyFor(row, key) {
+  if (key === "created_at") return Date.parse(row.created_at);
+  const type = COL[key]?.type;
+  if (type === "money") return row[key] === null ? null : Number(row[key]);
+  if (type === "date") return dateValue(row[key]);
+  const s = (row[key] ?? "").trim().toLowerCase();
+  return s === "" ? null : s;
+}
+
+export function sortRows(list, sort) {
+  return [...list].sort((a, b) => {
+    const av = sortKeyFor(a, sort.key);
+    const bv = sortKeyFor(b, sort.key);
+
+    // Blanks always sink, whichever way the column is sorted.
+    const ae = av === null || av === undefined || Number.isNaN(av);
+    const be = bv === null || bv === undefined || Number.isNaN(bv);
+    if (ae && be) return Date.parse(a.created_at) - Date.parse(b.created_at);
+    if (ae) return 1;
+    if (be) return -1;
+
+    const r = av < bv ? -1 : av > bv ? 1 : 0;
+    if (r === 0) return Date.parse(a.created_at) - Date.parse(b.created_at);
+    return sort.dir === "desc" ? -r : r;
+  });
+}
+
+/* ── Data access ────────────────────────────────────────────────────────── */
+export const loadClaims = () => sb.from("claims").select("*");
+export const updateCell = (id, key, value) =>
+  sb.from("claims").update({ [key]: value }).eq("id", id);
+export const insertRow = (board) =>
+  sb.from("claims").insert({ board }).select().single();
+export const deleteRow = (id) => sb.from("claims").delete().eq("id", id);
+
+export function subscribeClaims(handler) {
+  return sb
+    .channel("claims-live")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "claims" },
+      handler
+    )
+    .subscribe();
+}
+
+/* ── Auth ───────────────────────────────────────────────────────────────── */
+// Both pages use the same element ids for the sign-in card.
+export function wireAuth({ onIn, onOut }) {
+  let started = false;
+
+  $("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = $("loginBtn");
+    const err = $("loginErr");
+    err.hidden = true;
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
+
+    const { error } = await sb.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value,
+    });
+
+    btn.disabled = false;
+    btn.textContent = "Sign in";
+
+    if (error) {
+      err.textContent = error.message;
+      err.hidden = false;
+      $("password").select();
+    }
+  });
+
+  $("signOut").addEventListener("click", () => sb.auth.signOut());
+
+  sb.auth.onAuthStateChange(async (_event, session) => {
+    if (session) {
+      $("login").hidden = true;
+      $("app").hidden = false;
+      if ($("userEmail")) $("userEmail").textContent = session.user.email;
+      sb.realtime.setAuth(session.access_token);
+      if (!started) {
+        started = true;
+        await onIn(session);
+      }
+    } else {
+      started = false;
+      $("app").hidden = true;
+      $("login").hidden = false;
+      $("password").value = "";
+      onOut();
+    }
+  });
+
+  sb.auth.getSession().then(({ data }) => {
+    if (!data.session) {
+      $("login").hidden = false;
+      $("email").focus();
+    }
+  });
+}
+
+/* ── Toast ──────────────────────────────────────────────────────────────── */
+let toastTimer;
+export function toast(msg, bad = false) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.toggle("bad", bad);
+  el.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => (el.hidden = true), bad ? 5000 : 1800);
+}

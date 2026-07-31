@@ -1,20 +1,48 @@
 # Claims Tracker
 
 A shared, browser-based tracker for subrogation and collections claims. Two
-tabs, every cell editable in place, data in a hosted Postgres database so
+tabs, everything editable in place, data in a hosted Postgres database so
 everyone sees the same records and each other's edits.
 
-No build step. Three static files (`index.html`, `styles.css`, `app.js`) plus
-`config.js`, talking straight to Supabase.
+No build step — plain static files talking straight to Supabase.
+
+## Two views of the same data
+
+| | Standard | Large print |
+|---|---|---|
+| Page | `index.html` | `big.html` |
+| Layout | Dense table, all rows at once | One record per screen |
+| Built for | Everyday work | Low vision |
+
+They share one database, one login, and one set of live updates. An edit in
+either shows up in the other within a second or two. Each links to the other
+from its header.
+
+**Large print** shows the few fields that matter — Customer Name, Amount,
+Car # — in very large type, and keeps the rest behind a **Show the other
+details** button. Oversized **Back** / **Next** buttons (and the left/right
+arrow keys) move between records one at a time, and the two tabs are full-width
+buttons. Nothing on the page is smaller than 18px. **Delete** is deliberately
+tucked inside the details section, well away from the navigation buttons, so it
+can't be hit by accident.
 
 ## How it fits together
 
 | Piece | What it does |
 |---|---|
 | **Supabase** | Hosted Postgres. Stores the rows, handles login, pushes live updates. |
-| **GitHub Pages** | Serves the three static files. |
-| `supabase-setup.sql` | Creates the table, the security rules, and the starting data. |
+| **GitHub Pages** | Serves the static files. |
+| `shared.js` | Columns, currency handling, sorting, data access, auth — shared by both views so they can't drift apart. |
+| `supabase-setup.sql` | Creates the table and the security rules. |
+| `seed-data.sql` | The starting rows. **Not in this repo** — see below. |
 | `config.js` | The only file with environment-specific values. |
+
+### Customer data is not in this repository
+
+This repo is public, so it contains no customer names, VINs or claim numbers.
+`supabase-setup.sql` creates an empty table; the actual rows live in
+`seed-data.sql`, which is gitignored and kept locally. Run it once in the SQL
+Editor after the schema.
 
 ### One table, two tabs
 
@@ -88,7 +116,7 @@ Any static server works:
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000`. It talks to the same Supabase project as the
+Then open `http://localhost:8000` (or `/big.html` for the large-print view). It talks to the same Supabase project as the
 live site, so local edits are real edits.
 
 ## Getting at the database directly
