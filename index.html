@@ -10,29 +10,13 @@
 </head>
 <body>
 
-<!-- ── Sign in ───────────────────────────────────────────────────────────── -->
-<div id="login" class="login" hidden>
-  <form class="login-card" id="loginForm">
-    <h1>Claims Tracker</h1>
-    <p class="login-sub">Sign in to continue.</p>
-    <label for="email">Email</label>
-    <input id="email" type="email" autocomplete="username" required>
-    <label for="password">Password</label>
-    <input id="password" type="password" autocomplete="current-password" required>
-    <button type="submit" class="btn primary" id="loginBtn">Sign in</button>
-    <p class="login-err" id="loginErr" hidden></p>
-  </form>
-</div>
-
 <!-- ── App ───────────────────────────────────────────────────────────────── -->
 <div id="app" class="app" hidden>
 
   <header class="topbar">
     <h1>Claims Tracker</h1>
     <div class="who">
-      <span id="userEmail"></span>
       <a class="btn ghost" href="big.html">Large print</a>
-      <button class="btn ghost" id="signOut">Sign out</button>
     </div>
   </header>
 

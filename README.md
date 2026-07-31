@@ -14,7 +14,7 @@ No build step — plain static files talking straight to Supabase.
 | Layout | Dense table, all rows at once | One record per screen |
 | Built for | Everyday work | Low vision |
 
-They share one database, one login, and one set of live updates. An edit in
+They share one database and one set of live updates. An edit in
 either shows up in the other within a second or two. Each links to the other
 from its header.
 
@@ -30,9 +30,9 @@ can't be hit by accident.
 
 | Piece | What it does |
 |---|---|
-| **Supabase** | Hosted Postgres. Stores the rows, handles login, pushes live updates. |
+| **Supabase** | Hosted Postgres. Stores the rows and pushes live updates. |
 | **GitHub Pages** | Serves the static files. |
-| `shared.js` | Columns, currency handling, sorting, data access, auth — shared by both views so they can't drift apart. |
+| `shared.js` | Columns, currency handling, sorting and data access — shared by both views so they cannot drift apart. |
 | `supabase-setup.sql` | Creates the table and the security rules. |
 | `seed-data.sql` | The starting rows. **Not in this repo** — see below. |
 | `config.js` | The only file with environment-specific values. |
@@ -55,34 +55,36 @@ in the UI.
 them. The choice is remembered per person, per tab. To change the default for
 everyone, edit `BOARDS.collection.defaultCols` in `app.js`.
 
-## Security model
+## Access model — read this
 
-`config.js` holds the Supabase URL and the **anon key**. Both are designed to
-be public — the anon key is a publishable identifier, not a secret.
+**There is no sign-in.** Anyone who opens the URL sees the data and can edit or
+delete it. This was a deliberate choice; the trade-off is worth stating plainly:
 
-What actually protects the data is Row Level Security: the policy in
-`supabase-setup.sql` grants access only to the `authenticated` role. Someone who
-reads the anon key out of the page source and points a client at the database
-gets nothing back without a valid login.
+- The site is on a public URL and this repo is public, so the Supabase anon key
+  is visible in the page source.
+- The RLS policy grants the anonymous role full read **and write**. Someone with
+  the URL — or with the key from this repo — can change or delete every record.
+- The data is customer PII: names, VINs, claim numbers.
+- The pages send `noindex`, which discourages search engines but is not
+  protection.
 
-This is why it is safe for the site's source to be public while the customer
-data is not. It also means: **do not** put the `service_role` key in `config.js`
-or anywhere else in this repo. That one *is* a secret and it bypasses RLS.
+Do not put the `service_role` key in `config.js`. That one is a real secret and
+bypasses RLS entirely.
 
-## Managing who can log in
+### Turning a login back on later
 
-Signups are handled by you, not by a public registration form.
+The plumbing is still here, so this is a small job:
 
-1. Supabase dashboard → **Authentication** → **Users** → **Add user**
-2. Enter an email and password, tick **Auto Confirm User**
-3. Send those to the colleague
+1. In `supabase-setup.sql`, change the policy from `to anon, authenticated` to
+   `to authenticated`, and re-run it.
+2. Restore the sign-in card markup in `index.html` / `big.html` and swap
+   `start()` back for an auth wrapper in `shared.js` (see git history — commit
+   `d6d744a` has the working version).
+3. Create users under **Authentication → Users → Add user**, ticking
+   **Auto Confirm User**, and turn off public signup under
+   **Authentication → Sign In / Providers → Email**.
 
-To revoke access, delete the user there. To make everyone share one login,
-create a single user and hand the same credentials out — the app does not care
-either way.
-
-Turn public signup off under **Authentication → Sign In / Providers → Email →
-Allow new users to sign up** so nobody can self-register.
+The login styles are still in `styles.css` and `big.css` for this reason.
 
 ## Data notes
 

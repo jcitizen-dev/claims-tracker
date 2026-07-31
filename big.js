@@ -1,12 +1,12 @@
 /* Large-print view: one record at a time, big type, secondary fields behind a
- * "more details" button, oversized Back/Next. Same database, same login and
- * same live updates as the standard view. */
+ * "more details" button, oversized Back/Next. Same database and same live
+ * updates as the standard view. */
 import {
   COL, BOARDS,
-  configured, sb, $, showSetupError,
+  configured, $, showSetupError,
   display, editable, parseMoney, sortRows,
   loadClaims, updateCell, insertRow, deleteRow, subscribeClaims,
-  wireAuth, toast,
+  start, toast,
 } from "./shared.js";
 
 if (!configured) {
@@ -20,7 +20,6 @@ let board = "subrogation";
 let index = 0;              // which record on this board we're looking at
 let showDetails = false;
 let editingKey = null;      // key of the focused input, or null
-let channel = null;
 
 const boardRows = () =>
   sortRows(rows.filter((r) => r.board === board), BOARDS[board].defaultSort);
@@ -323,37 +322,29 @@ function upsertLocal(row) {
   else rows[i] = row;
 }
 
-wireAuth({
-  async onIn() {
-    const { data, error } = await loadClaims();
-    if (error) return toast("Could not load claims: " + error.message, true);
-    rows = data;
-    render();
+start(async () => {
+  const { data, error } = await loadClaims();
+  if (error) return toast("Could not load claims: " + error.message, true);
+  rows = data;
+  render();
 
-    channel = subscribeClaims((payload) => {
-      const showing = currentRow()?.id;
-      if (payload.eventType === "DELETE") {
-        rows = rows.filter((r) => r.id !== payload.old.id);
-      } else {
-        if (editingKey && payload.new.id === showing) {
-          const keep = rows.find((r) => r.id === payload.new.id);
-          if (keep) {
-            upsertLocal({ ...payload.new, [editingKey]: keep[editingKey] });
-            return;
-          }
+  subscribeClaims((payload) => {
+    const showing = currentRow()?.id;
+    if (payload.eventType === "DELETE") {
+      rows = rows.filter((r) => r.id !== payload.old.id);
+    } else {
+      if (editingKey && payload.new.id === showing) {
+        const keep = rows.find((r) => r.id === payload.new.id);
+        if (keep) {
+          upsertLocal({ ...payload.new, [editingKey]: keep[editingKey] });
+          return;
         }
-        upsertLocal(payload.new);
       }
-      // Keep the reader on the record they were looking at.
-      const list = boardRows();
-      const at = list.findIndex((r) => r.id === showing);
-      if (at !== -1) index = at;
-      render();
-    });
-  },
-  onOut() {
-    rows = [];
-    index = 0;
-    if (channel) { sb.removeChannel(channel); channel = null; }
-  },
+      upsertLocal(payload.new);
+    }
+    // Keep the reader on the record they were looking at.
+    const at = boardRows().findIndex((r) => r.id === showing);
+    if (at !== -1) index = at;
+    render();
+  });
 });

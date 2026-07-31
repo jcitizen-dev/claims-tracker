@@ -138,61 +138,13 @@ export function subscribeClaims(handler) {
     .subscribe();
 }
 
-/* ── Auth ───────────────────────────────────────────────────────────────── */
-// Both pages use the same element ids for the sign-in card.
-export function wireAuth({ onIn, onOut }) {
-  let started = false;
-
-  $("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const btn = $("loginBtn");
-    const err = $("loginErr");
-    err.hidden = true;
-    btn.disabled = true;
-    btn.textContent = "Signing in…";
-
-    const { error } = await sb.auth.signInWithPassword({
-      email: $("email").value.trim(),
-      password: $("password").value,
-    });
-
-    btn.disabled = false;
-    btn.textContent = "Sign in";
-
-    if (error) {
-      err.textContent = error.message;
-      err.hidden = false;
-      $("password").select();
-    }
-  });
-
-  $("signOut").addEventListener("click", () => sb.auth.signOut());
-
-  sb.auth.onAuthStateChange(async (_event, session) => {
-    if (session) {
-      $("login").hidden = true;
-      $("app").hidden = false;
-      if ($("userEmail")) $("userEmail").textContent = session.user.email;
-      sb.realtime.setAuth(session.access_token);
-      if (!started) {
-        started = true;
-        await onIn(session);
-      }
-    } else {
-      started = false;
-      $("app").hidden = true;
-      $("login").hidden = false;
-      $("password").value = "";
-      onOut();
-    }
-  });
-
-  sb.auth.getSession().then(({ data }) => {
-    if (!data.session) {
-      $("login").hidden = false;
-      $("email").focus();
-    }
-  });
+/* ── Start ──────────────────────────────────────────────────────────────── */
+// There is no sign-in: the page opens straight into the data, by request.
+// Access is therefore controlled only by who knows the URL -- the RLS policy
+// in supabase-setup.sql grants the anonymous role full read and write.
+export function start(onReady) {
+  $("app").hidden = false;
+  return onReady();
 }
 
 /* ── Toast ──────────────────────────────────────────────────────────────── */

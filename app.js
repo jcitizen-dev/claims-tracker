@@ -1,10 +1,10 @@
 /* Standard table view. Dense grid, every cell editable in place. */
 import {
   COLUMNS, COL, ALL_KEYS, BOARDS,
-  configured, sb, $, showSetupError,
+  configured, $, showSetupError,
   display, editable, parseMoney, sortRows,
   loadClaims, updateCell, insertRow, deleteRow, subscribeClaims,
-  wireAuth, toast,
+  start, toast,
 } from "./shared.js";
 
 if (!configured) {
@@ -18,7 +18,6 @@ let board = "subrogation";
 let filter = "";
 let sort = { ...BOARDS[board].defaultSort };
 let editing = null;      // { id, key } while a cell has focus
-let channel = null;
 
 const visibleCols = {
   subrogation: loadCols("subrogation"),
@@ -374,33 +373,27 @@ function upsertLocal(row) {
   else rows[i] = row;
 }
 
-wireAuth({
-  async onIn() {
-    buildColMenu();
-    const { data, error } = await loadClaims();
-    if (error) return toast("Could not load claims: " + error.message, true);
-    rows = data;
-    render();
+start(async () => {
+  buildColMenu();
+  const { data, error } = await loadClaims();
+  if (error) return toast("Could not load claims: " + error.message, true);
+  rows = data;
+  render();
 
-    channel = subscribeClaims((payload) => {
-      if (payload.eventType === "DELETE") {
-        rows = rows.filter((r) => r.id !== payload.old.id);
-      } else {
-        // Don't yank a cell out from under someone mid-edit.
-        if (editing && editing.id === payload.new.id) {
-          const keep = rows.find((r) => r.id === payload.new.id);
-          if (keep) {
-            upsertLocal({ ...payload.new, [editing.key]: keep[editing.key] });
-            return;
-          }
+  subscribeClaims((payload) => {
+    if (payload.eventType === "DELETE") {
+      rows = rows.filter((r) => r.id !== payload.old.id);
+    } else {
+      // Don't yank a cell out from under someone mid-edit.
+      if (editing && editing.id === payload.new.id) {
+        const keep = rows.find((r) => r.id === payload.new.id);
+        if (keep) {
+          upsertLocal({ ...payload.new, [editing.key]: keep[editing.key] });
+          return;
         }
-        upsertLocal(payload.new);
       }
-      render();
-    });
-  },
-  onOut() {
-    rows = [];
-    if (channel) { sb.removeChannel(channel); channel = null; }
-  },
+      upsertLocal(payload.new);
+    }
+    render();
+  });
 });

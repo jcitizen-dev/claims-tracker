@@ -45,16 +45,22 @@ create trigger claims_touch
 
 -- ---------------------------------------------------------------------------
 -- Row Level Security.
--- The anon key that ships in the published site grants NOTHING on its own --
--- every read and write requires a signed-in user. This is what makes it safe
--- for the site's source to be public while the customer data is not.
+--
+-- The app has no sign-in, by request, so the anonymous role is granted full
+-- read and write. Be clear about what that means: the anon key is published in
+-- the page source, so anyone who has the site's URL can read, change and
+-- delete every row. The only thing limiting access is knowing the address.
+--
+-- To lock it down later, change `to anon, authenticated` to `to authenticated`
+-- here and re-enable the sign-in screen in the app.
 -- ---------------------------------------------------------------------------
 alter table public.claims enable row level security;
 
 drop policy if exists claims_all_authenticated on public.claims;
-create policy claims_all_authenticated on public.claims
+drop policy if exists claims_public on public.claims;
+create policy claims_public on public.claims
   for all
-  to authenticated
+  to anon, authenticated
   using (true)
   with check (true);
 
