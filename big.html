@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Claims — Large Print</title>
-<link rel="stylesheet" href="big.css?v=20260731f">
+<link rel="stylesheet" href="big.css?v=20260731g">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128203;</text></svg>">
 </head>
 <body>
@@ -36,21 +36,16 @@
       <span>Next</span><span class="nav-arrow">→</span>
     </button>
   </nav>
-
-  <!-- No "add record" either: this view reads and edits existing claims.
-       Adding and deleting both happen on the standard table view. -->
-  <div class="extras">
-    <a class="btn wide link" href="index.html">Switch to the standard view</a>
-  </div>
 </div>
 
-<!-- This view has no delete, by design. Records are removed from the standard
-     table view instead, so there is nothing destructive to reach here. -->
+<!-- Nothing follows the pager on purpose. This view has no add, no delete, and
+     no link out to the standard view: it reads and edits the record on screen,
+     and that is all. The standard view links here, not the other way round. -->
 
 <div id="toast" class="toast" hidden></div>
 <div id="setupErr" class="setup-err" hidden></div>
 
-<script src="config.js?v=20260731f"></script>
-<script type="module" src="big.js?v=20260731f"></script>
+<script src="config.js?v=20260731g"></script>
+<script type="module" src="big.js?v=20260731g"></script>
 </body>
 </html>

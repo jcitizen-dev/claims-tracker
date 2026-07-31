@@ -58,8 +58,6 @@ body {
 
 /* No .danger button here on purpose -- this view has nothing destructive. */
 .btn.small { font-size: 19px; min-height: 48px; padding: 10px 16px; }
-.btn.wide  { width: 100%; }
-.btn.link  { font-weight: 600; color: var(--dim); border-style: dashed; }
 
 /* ── Sign in ─────────────────────────────────────────────────────────────── */
 .login { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
@@ -208,8 +206,6 @@ body {
 .btn.nav { font-size: 28px; min-height: 94px; }
 .nav-arrow { font-size: 36px; line-height: 1; }
 
-.extras { margin-top: 16px; display: grid; gap: 12px; }
-
 .empty { font-size: 26px; font-weight: 700; text-align: center; padding: 40px 10px; }
 
 /* ── Toast ───────────────────────────────────────────────────────────────── */
@@ -273,7 +269,7 @@ body {
 }
 
 @media print {
-  .topbar, .tabs, .pager, .extras, .disclose, .toast { display: none !important; }
+  .tabs, .pager, .disclose, .toast { display: none !important; }
   .details[hidden] { display: block !important; }
   .card { border-width: 2px; }
 }

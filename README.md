@@ -15,9 +15,10 @@ No build step — plain static files talking straight to Supabase.
 | Add / delete | Yes | No — read and edit only |
 | Built for | Everyday work | Low vision |
 
-They share one database and one set of live updates. An edit in
-either shows up in the other within a second or two. Each links to the other
-from its header.
+They share one database and one set of live updates. An edit in either shows
+up in the other within a second or two. The standard view links to the large
+print one; the link does not go back the other way, so Dave's page has no way
+out of itself — bookmark `big.html` directly on his phone.
 
 **Large print** shows the few fields that matter — Customer Name, Amount,
 Car # — in very large type, and keeps the rest behind a **Show the other
@@ -48,7 +49,8 @@ rules that buy the space:
 
 **The large-print view cannot add or delete records**, on purpose — it reads
 and edits existing claims only. Both of those happen on the standard table
-view, so there is nothing on Dave's page that can lose or create a record.
+view, so there is nothing on Dave's page that can lose or create a record, and
+nothing below the pager at all.
 
 One consequence: a record with no other details has no way to gain them from
 this view, since the fields are only reachable through that button. Fill those
