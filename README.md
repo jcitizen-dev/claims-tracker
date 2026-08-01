@@ -28,6 +28,23 @@ details; a name-and-car-only record shows no dropdown at all. Oversized
 records one at a time, and the two tabs are full-width buttons. There is no
 page heading, so the record gets the vertical space. Nothing is under 18px.
 
+### The running total
+
+A **Total to Collect** bar sits under Back/Next on the large-print view: every
+amount on the current tab, added up. It is a motivator, so it is styled like
+the goal it is — brand red, 34px — and it updates the moment any amount
+changes, including an amount changed by someone else on the standard view.
+
+It uses `position: sticky; bottom: 0`, so it sits in normal flow when the page
+fits and pins itself to the bottom edge when the details section is open and
+the page scrolls. The number is never off screen.
+
+It is hidden entirely when the tab has no amounts at all — Collections
+currently has none, and a $0.00 "goal" reads as discouraging rather than
+motivating. It appears by itself once any Collections amount is filled in.
+
+To rename it, edit the `.total-label` text in `big.html`.
+
 ### Fitting on a phone
 
 It is laid out so **Back / Next are reachable without scrolling on an iPhone

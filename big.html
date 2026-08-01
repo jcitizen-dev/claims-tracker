@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Claims — Large Print</title>
-<link rel="stylesheet" href="big.css?v=20260731h">
+<link rel="stylesheet" href="big.css?v=20260731i">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128203;</text></svg>">
 </head>
 <body>
@@ -36,6 +36,13 @@
       <span>Next</span><span class="nav-arrow">→</span>
     </button>
   </nav>
+
+  <!-- The goal. Sticks to the bottom of the screen so it stays in view even
+       when the details section is open and the page scrolls. -->
+  <p class="total" id="total" hidden>
+    <span class="total-label">Total to Collect</span>
+    <span class="total-amount" id="totalAmount"></span>
+  </p>
 </div>
 
 <!-- Nothing follows the pager on purpose. This view has no add, no delete, and
@@ -45,7 +52,7 @@
 <div id="toast" class="toast" hidden></div>
 <div id="setupErr" class="setup-err" hidden></div>
 
-<script src="config.js?v=20260731h"></script>
-<script type="module" src="big.js?v=20260731h"></script>
+<script src="config.js?v=20260731i"></script>
+<script type="module" src="big.js?v=20260731i"></script>
 </body>
 </html>

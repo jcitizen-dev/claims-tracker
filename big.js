@@ -7,10 +7,10 @@
 import {
   COL, BOARDS,
   configured, $, showSetupError,
-  display, editable, parseMoney, sortRows,
+  display, editable, parseMoney, fmtMoney, sortRows,
   loadClaims, updateCell, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731h";
+} from "./shared.js?v=20260731i";
 
 if (!configured) {
   showSetupError();
@@ -52,6 +52,16 @@ function render() {
 
   $("prevBtn").disabled = index <= 0;
   $("nextBtn").disabled = index >= list.length - 1;
+
+  // The goal: every amount on this tab, added up. Hidden when the tab has no
+  // amounts at all -- Collections currently has none, and a $0.00 "goal" is
+  // the opposite of motivating.
+  const priced = list.filter((r) => r.amount !== null && r.amount !== undefined);
+  $("total").hidden = priced.length === 0;
+  if (priced.length) {
+    $("totalAmount").textContent =
+      fmtMoney(priced.reduce((sum, r) => sum + Number(r.amount), 0));
+  }
 
   const card = $("card");
   card.innerHTML = "";
