@@ -15,7 +15,12 @@
   --radius:    6px;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  /* No double-tap-to-zoom on touch devices; pinch zoom still works. See the
+     matching note in big.css. */
+  touch-action: manipulation;
+}
 
 /* The `hidden` attribute only sets `display: none` from the UA stylesheet, so
  * any author rule setting `display` (.modal, .app) silently beats it and the

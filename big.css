@@ -12,7 +12,17 @@
   --ok:      #10692f;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  /* Kill iOS double-tap-to-zoom. Two quick taps that missed Back/Next were
+     landing on empty space and Safari read them as a zoom gesture, leaving the
+     page magnified into a corner -- not something to expect someone to pinch
+     their way out of. `manipulation` still allows scrolling AND pinch zoom, so
+     deliberate zooming is untouched; only the accidental double-tap is gone.
+     Note this must not be done with `user-scalable=no`, which would take pinch
+     zoom away entirely. */
+  touch-action: manipulation;
+}
 
 /* The `hidden` attribute only sets `display: none` from the UA stylesheet, so
  * any author rule setting `display` (.modal, .tabs) silently beats it and the
