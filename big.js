@@ -10,7 +10,7 @@ import {
   display, editable, parseMoney, fmtMoney, sortRows,
   loadClaims, updateCell, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731i";
+} from "./shared.js?v=20260731j";
 
 if (!configured) {
   showSetupError();
@@ -29,6 +29,9 @@ const boardRows = () =>
 
 const currentRow = () => boardRows()[index] ?? null;
 
+// Matches the phone breakpoint in big.css; the counter's wording depends on it.
+const NARROW = window.matchMedia("(max-width: 520px)");
+
 /* ── Rendering ──────────────────────────────────────────────────────────── */
 // Re-rendering replaces the inputs, which would interrupt typing. Defer while
 // a field has focus and catch up on blur, exactly as the table view does.
@@ -46,8 +49,12 @@ function render() {
 
   $("empty").hidden = list.length > 0;
   $("card").hidden = list.length === 0;
+  // On a phone the counter shares a row with Back/Next, so it drops the word
+  // "Record" to leave the buttons enough width. Type size is unchanged.
   $("position").textContent = list.length
-    ? `Record ${index + 1} of ${list.length}`
+    ? NARROW.matches
+      ? `${index + 1} of ${list.length}`
+      : `Record ${index + 1} of ${list.length}`
     : "";
 
   $("prevBtn").disabled = index <= 0;
@@ -259,6 +266,10 @@ function go(delta) {
 
 $("prevBtn").addEventListener("click", () => go(-1));
 $("nextBtn").addEventListener("click", () => go(1));
+
+// Rotating the phone crosses the breakpoint; re-render so the counter's
+// wording matches the layout it is now sharing a row with.
+NARROW.addEventListener("change", () => render());
 
 document.addEventListener("keydown", (e) => {
   // Don't hijack the arrow keys while someone is typing in a field.

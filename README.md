@@ -35,9 +35,23 @@ amount on the current tab, added up. It is a motivator, so it is styled like
 the goal it is — brand red, 34px — and it updates the moment any amount
 changes, including an amount changed by someone else on the standard view.
 
-It uses `position: sticky; bottom: 0`, so it sits in normal flow when the page
-fits and pins itself to the bottom edge when the details section is open and
-the page scrolls. The number is never off screen.
+### How the large-print layout holds together
+
+`big.html` is a **fixed-height flex column**: `.app` is exactly `100dvh`, the
+tabs are pinned at the top, the pager and the total are pinned at the bottom,
+and `.card` takes the slack. The card is the *only* thing that scrolls — when a
+record is long, or the window is short, the card shrinks and scrolls inside
+itself while the nav and the total stay exactly where they are.
+
+This replaced a `position: sticky` total, which pinned itself to the viewport
+bottom whenever the page scrolled and rode up over the record counter and the
+Back/Next buttons. Sticky always overlaps once content exceeds the viewport;
+the flex column cannot, at any height. Verified clean from 620px to 800px tall.
+
+**If you change this file, keep `height: 100dvh` (not `min-height`) on `.app`
+and `flex: 1 1 auto; min-height: 0; overflow-y: auto` on `.card`.** Those four
+declarations are what make it work; `min-height` only sets a floor and lets the
+page grow again.
 
 It is hidden entirely when the tab has no amounts at all — Collections
 currently has none, and a $0.00 "goal" reads as discouraging rather than
