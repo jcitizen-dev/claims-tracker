@@ -53,9 +53,9 @@ and `flex: 1 1 auto; min-height: 0; overflow-y: auto` on `.card`.** Those four
 declarations are what make it work; `min-height` only sets a floor and lets the
 page grow again.
 
-It is hidden entirely when the tab has no amounts at all — Collections
-currently has none, and a $0.00 "goal" reads as discouraging rather than
-motivating. It appears by itself once any Collections amount is filled in.
+It shows on both tabs, always. Collections has no amounts yet and so reads
+$0.00 — the honest number, and it keeps the bar in the same place whichever tab
+is open.
 
 To rename it, edit the `.total-label` text in `big.html`.
 

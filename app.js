@@ -5,7 +5,7 @@ import {
   display, editable, parseMoney, fmtMoney, sortRows,
   loadClaims, updateCell, insertRow, deleteRow, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731m";
+} from "./shared.js?v=20260731n";
 
 if (!configured) {
   showSetupError();

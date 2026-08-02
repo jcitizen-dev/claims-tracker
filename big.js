@@ -10,7 +10,7 @@ import {
   display, editable, parseMoney, fmtMoney, sortRows,
   loadClaims, updateCell, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731m";
+} from "./shared.js?v=20260731n";
 
 if (!configured) {
   showSetupError();
@@ -60,15 +60,13 @@ function render() {
   $("prevBtn").disabled = index <= 0;
   $("nextBtn").disabled = index >= list.length - 1;
 
-  // The goal: every amount on this tab, added up. Hidden when the tab has no
-  // amounts at all -- Collections currently has none, and a $0.00 "goal" is
-  // the opposite of motivating.
+  // The goal: every amount on this tab, added up. Shown on both tabs, always --
+  // Collections has no amounts yet and so reads $0.00, which is the honest
+  // number and keeps the bar in the same place whichever tab is open.
   const priced = list.filter((r) => r.amount !== null && r.amount !== undefined);
-  $("total").hidden = priced.length === 0;
-  if (priced.length) {
-    $("totalAmount").textContent =
-      fmtMoney(priced.reduce((sum, r) => sum + Number(r.amount), 0));
-  }
+  $("total").hidden = false;
+  $("totalAmount").textContent =
+    fmtMoney(priced.reduce((sum, r) => sum + Number(r.amount), 0));
 
   const card = $("card");
   card.innerHTML = "";
