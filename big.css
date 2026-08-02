@@ -261,6 +261,10 @@ body {
 }
 /* line-height 1.1 on both: the inherited 1.5 was adding ~20px of dead space
    to a bar that has to fit under the pager. */
+/* One line, always. Left to wrap, a wide total squeezed the label onto two
+   lines while a narrow one did not, so the bar changed height between tabs.
+   The ellipsis is a last resort for an implausibly large total; the amount
+   itself never shrinks. */
 .total-label {
   font-size: 19px;
   line-height: 1.1;
@@ -268,8 +272,13 @@ body {
   letter-spacing: .04em;
   text-transform: uppercase;
   color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 .total-amount {
+  flex: 0 0 auto;            /* the number is the point; it never gets squeezed */
   font-size: 34px;
   line-height: 1.1;
   font-weight: 800;
