@@ -330,6 +330,11 @@ body {
   .tabs { gap: 8px; }
   .tab  { padding: 12px 4px; }
 
+  /* See big.html: with a wide amount the full label is ~24px short of fitting
+     and gets ellipsised. "To Collect" says the same thing and leaves headroom
+     for the total to grow well past six figures. */
+  .total-word { display: none; }
+
   /* The counter stays on the SAME row as the buttons here, not on a row of its
      own beneath them. Its own row pushed the total bar's natural position below
      the viewport, which made `sticky` pin the bar and ride up over the counter,

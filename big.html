@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Claims — Large Print</title>
-<link rel="stylesheet" href="big.css?v=20260731p">
+<link rel="stylesheet" href="big.css?v=20260731q">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128203;</text></svg>">
 </head>
 <body>
@@ -40,7 +40,9 @@
   <!-- The goal. Sticks to the bottom of the screen so it stays in view even
        when the details section is open and the page scrolls. -->
   <p class="total" id="total" hidden>
-    <span class="total-label">Total to Collect</span>
+    <!-- "Total" is dropped on phones, where the amount leaves the label about
+         24px short of fitting. "To Collect $49,278.83" still says it. -->
+    <span class="total-label"><span class="total-word">Total </span>to Collect</span>
     <span class="total-amount" id="totalAmount"></span>
   </p>
 </div>
@@ -52,7 +54,7 @@
 <div id="toast" class="toast" hidden></div>
 <div id="setupErr" class="setup-err" hidden></div>
 
-<script src="config.js?v=20260731p"></script>
-<script type="module" src="big.js?v=20260731p"></script>
+<script src="config.js?v=20260731q"></script>
+<script type="module" src="big.js?v=20260731q"></script>
 </body>
 </html>
