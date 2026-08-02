@@ -375,6 +375,9 @@ td.rowdel { width: 34px; }
 
 .print-title, .print-note { display: none; }
 
+/* Totals belong on the printout, not the working grid. */
+.grid tfoot { display: none; }
+
 /* ── Modal ───────────────────────────────────────────────────────────────── */
 .modal {
   position: fixed;
@@ -475,6 +478,24 @@ td.rowdel { width: 34px; }
   .grid th .arrow { display: none; }
   .grid td { border-bottom: 1px solid #ccc; }
   .grid tbody tr { break-inside: avoid; }
+
+  /* table-row-group, not the default table-footer-group: as a footer group the
+     browser repeats it at the bottom of every printed page, and a grand total
+     restated on page 1 of 3 invites being read as that page's subtotal. This
+     way it appears once, at the end. */
+  .grid tfoot {
+    display: table-row-group;
+    break-inside: avoid;
+  }
+  .grid tfoot td {
+    padding: 5px 4px;
+    font-weight: 700;
+    font-size: 9.5pt;
+    border-top: 1.5px solid #000;
+    border-bottom: none;
+    white-space: nowrap;
+  }
+  .grid tfoot td.num { text-align: right; }
   .cell {
     padding: 3px 4px;
     min-height: 0;

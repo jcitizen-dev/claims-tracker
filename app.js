@@ -2,10 +2,10 @@
 import {
   COLUMNS, COL, ALL_KEYS, BOARDS,
   configured, $, showSetupError,
-  display, editable, parseMoney, sortRows,
+  display, editable, parseMoney, fmtMoney, sortRows,
   loadClaims, updateCell, insertRow, deleteRow, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731k";
+} from "./shared.js?v=20260731m";
 
 if (!configured) {
   showSetupError();
@@ -106,6 +106,8 @@ function render() {
   tbody.innerHTML = "";
   for (const row of data) tbody.append(renderRow(row, cols));
 
+  renderTotals(cols, data);
+
   const total = rows.filter((r) => r.board === board).length;
   $("count").textContent = filter.trim()
     ? `${data.length} of ${total}`
@@ -115,6 +117,41 @@ function render() {
   $("empty").textContent = total === 0
     ? "No rows yet. Use “+ Add Row” to start."
     : "Nothing matches that search.";
+}
+
+/* Totals row for the printed page. Sums `data` — the rows actually being
+ * printed — so a filtered print totals what is on the paper, not the whole
+ * board. Skipped entirely when Amount is switched off or nothing has one. */
+function renderTotals(cols, data) {
+  const tfoot = $("tfoot");
+  tfoot.innerHTML = "";
+
+  const priced = data.filter((r) => r.amount !== null && r.amount !== undefined);
+  if (!cols.includes("amount") || !priced.length) return;
+
+  const sum = priced.reduce((acc, r) => acc + Number(r.amount), 0);
+  const tr = document.createElement("tr");
+
+  cols.forEach((key, i) => {
+    const td = document.createElement("td");
+    if (key === "amount") {
+      td.className = "num";
+      td.textContent = fmtMoney(sum);
+    } else if (i === 0) {
+      // Amount is normally the second column, so the label sits to its left.
+      // If Amount has been dragged to first place the label is simply omitted;
+      // a bold ruled figure under a column of amounts reads clearly enough.
+      td.textContent = priced.length === data.length
+        ? "Total"
+        : `Total (${priced.length} of ${data.length})`;
+    }
+    tr.append(td);
+  });
+
+  const tdDel = document.createElement("td");
+  tdDel.className = "rowdel";
+  tr.append(tdDel);
+  tfoot.append(tr);
 }
 
 function renderRow(row, cols) {
