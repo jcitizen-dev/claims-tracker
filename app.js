@@ -5,7 +5,7 @@ import {
   display, editable, parseMoney, sortRows,
   loadClaims, updateCell, insertRow, deleteRow, subscribeClaims, isDeleted,
   start, toast,
-} from "./shared.js?v=20260731j";
+} from "./shared.js?v=20260731k";
 
 if (!configured) {
   showSetupError();
@@ -64,6 +64,14 @@ function render() {
 
   $("printTitle").textContent =
     BOARDS[board].label + " — " + new Date().toLocaleDateString("en-US");
+
+  // Printed pages carry their own provenance: how many records, and whether a
+  // search was narrowing them at the time.
+  const boardTotal = rows.filter((r) => r.board === board).length;
+  const q = filter.trim();
+  $("printNote").textContent = q
+    ? `${data.length} of ${boardTotal} records — filtered by “${q}”`
+    : `${boardTotal} record${boardTotal === 1 ? "" : "s"}`;
 
   const thead = $("thead");
   thead.innerHTML = "";

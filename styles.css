@@ -373,7 +373,7 @@ td.rowdel { width: 34px; }
   margin: 0;
 }
 
-.print-title { display: none; }
+.print-title, .print-note { display: none; }
 
 /* ── Modal ───────────────────────────────────────────────────────────────── */
 .modal {
@@ -442,9 +442,19 @@ td.rowdel { width: 34px; }
 
   .print-title {
     display: block;
-    margin: 0 0 10px;
+    margin: 0 0 2px;
     font-size: 15px;
     font-weight: 700;
+  }
+
+  /* Says how many records are on the page and whether a search was filtering
+     them. Without it a filtered print is indistinguishable from the full list,
+     which is a bad property for a document someone files or hands over. */
+  .print-note {
+    display: block;
+    margin: 0 0 10px;
+    font-size: 9pt;
+    color: #333;
   }
 
   .tablewrap {
